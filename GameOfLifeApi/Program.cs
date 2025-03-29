@@ -1,5 +1,9 @@
 
 using GameOfLifeApi.Data;
+using GameOfLifeApi.Data.Repository;
+using GameOfLifeApi.Data.Repository.Abstraction;
+using GameOfLifeApi.Service;
+using GameOfLifeApi.Service.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameOfLifeApi
@@ -17,6 +21,9 @@ namespace GameOfLifeApi
             string mySqlConnectionStr = builder.Configuration.GetConnectionString("DefaultConnection")!;
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
+
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            builder.Services.AddScoped(typeof(IGameOfLifeService), typeof(GameOfLifeService));
 
             var app = builder.Build();
 
