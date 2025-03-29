@@ -1,0 +1,6 @@
+services:
+  gameoflifeapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"

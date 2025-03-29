@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLifeApi", "GameOfLife
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLifeTests", "GameOfLifeTests\GameOfLifeTests.csproj", "{5DCF05CE-A4A9-45F5-8EF7-4A9D3C40D18D}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1B8E73BA-006D-48DD-96C0-B4DBD84DEBA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5DCF05CE-A4A9-45F5-8EF7-4A9D3C40D18D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DCF05CE-A4A9-45F5-8EF7-4A9D3C40D18D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DCF05CE-A4A9-45F5-8EF7-4A9D3C40D18D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B8E73BA-006D-48DD-96C0-B4DBD84DEBA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B8E73BA-006D-48DD-96C0-B4DBD84DEBA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B8E73BA-006D-48DD-96C0-B4DBD84DEBA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B8E73BA-006D-48DD-96C0-B4DBD84DEBA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
