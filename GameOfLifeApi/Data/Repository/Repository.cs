@@ -17,9 +17,21 @@ namespace GameOfLifeApi.Data.Repository
 
         }
 
+        public async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            var result = await _dbSet.AddAsync(entity, cancellationToken);
+            await SaveAsync();
+            return result.Entity;
+        }
+
         public async Task<TEntity> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             return await _dbSet.FindAsync(id, cancellationToken);
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }
