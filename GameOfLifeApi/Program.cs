@@ -2,9 +2,12 @@
 using GameOfLifeApi.Data;
 using GameOfLifeApi.Data.Repository;
 using GameOfLifeApi.Data.Repository.Abstraction;
+using GameOfLifeApi.Exception;
 using GameOfLifeApi.Service;
 using GameOfLifeApi.Service.Abstractions;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace GameOfLifeApi
 {
@@ -33,13 +36,36 @@ namespace GameOfLifeApi
                 dbContext.Database.Migrate();
             }
 
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    context.Response.StatusCode = 500;
+                    context.Response.ContentType = "application/json";
+                    var errorFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if (errorFeature != null)
+                    {
+                        var exception = errorFeature.Error;
+                        var endpoint = errorFeature.Endpoint?.ToString();
+                        var response = new ErrorResponse()
+                        {
+                            Endpoint = endpoint,
+                            StatusCode = StatusCodes.Status500InternalServerError,
+                            ExceptionMessage = exception.Message,
+                            StackTrace = exception.StackTrace,
+                            Title = $"[{endpoint}] - Someting went wrong"
+                        };
+                        app.Logger.LogError(errorFeature.Error, JsonSerializer.Serialize(response));
+                        await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = exception.Message }));
+                    }
+                });
+            });
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
-            app.UseAuthorization();
 
             app.MapControllers();
 

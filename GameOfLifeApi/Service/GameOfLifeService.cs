@@ -9,9 +9,11 @@ namespace GameOfLifeApi.Service
     public class GameOfLifeService : IGameOfLifeService
     {
         private readonly IRepository<GameOfLifeBoard> _repository;
-        public GameOfLifeService(IRepository<GameOfLifeBoard> repository) 
+        private readonly ILogger<GameOfLifeService> _logger;
+        public GameOfLifeService(IRepository<GameOfLifeBoard> repository, ILogger<GameOfLifeService> logger)
         {
             _repository = repository;
+            _logger = logger;
         }
 
         public async Task<GameOfLifeBoard> AddGameOfLifeBoardAsync(bool[][] boardState, CancellationToken cancellationToken = default)
@@ -20,12 +22,16 @@ namespace GameOfLifeApi.Service
             {
                 LastBoardState = JsonSerializer.Serialize(boardState)
             };
-            return await _repository.AddAsync(board, cancellationToken);
+            var newBoard = await _repository.AddAsync(board, cancellationToken);
+            _logger.LogInformation($"Board state saved with Id {newBoard.Id}");
+            return newBoard;
         }
 
         public async Task<GameOfLifeBoard> GetGameOfLifeBoardAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _repository.GetByIdAsync(id, cancellationToken);
+            var board = await _repository.GetByIdAsync(id, cancellationToken);
+            _logger.LogInformation($"Successfully got board with Id: {id}");
+            return board;
         }
 
         public async Task<bool[][]?> GetAndSaveNextStateAsync(int id)
@@ -35,6 +41,7 @@ namespace GameOfLifeApi.Service
             var nextState = ComputeNextState(state);
             board.LastBoardState = JsonSerializer.Serialize(nextState);
             await _repository.SaveAsync();
+            _logger.LogInformation($"Next state computed and saved for board with Id: {id}");
             return nextState;
 
         }
@@ -49,6 +56,7 @@ namespace GameOfLifeApi.Service
             }
             board.LastBoardState = JsonSerializer.Serialize(state);
             await _repository.SaveAsync();
+            _logger.LogInformation($"Future state computed and saved for board with Id: {id}, Steps: {steps}");
             return state;
         }
 
@@ -56,6 +64,7 @@ namespace GameOfLifeApi.Service
         {
             var (board, state) = await GetBoardStateAsync(id);
             if (board == null || state == null) return null;
+            _logger.LogInformation($"Trying to get final State of board with Id: {id} and {maxAttempts} attempts.");
             for (int i = 0; i < maxAttempts; i++)
             {
                 var nextState = ComputeNextState(state);
@@ -63,10 +72,12 @@ namespace GameOfLifeApi.Service
                 {
                     board.LastBoardState = JsonSerializer.Serialize(nextState);
                     await _repository.SaveAsync();
+                    _logger.LogInformation($"After {i + 1} attempts, final state of board with Id: {id} found. Last state saved.");
                     return state;
                 }
                 state = nextState;
             }
+            _logger.LogInformation($"After {maxAttempts} attempts, final state of board with Id: {id} not found.");
             return null;
         }
 
