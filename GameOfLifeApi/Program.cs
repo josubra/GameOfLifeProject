@@ -7,6 +7,7 @@ using GameOfLifeApi.Service;
 using GameOfLifeApi.Service.Abstractions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using System.Text.Json;
 
 namespace GameOfLifeApi
@@ -19,7 +20,10 @@ namespace GameOfLifeApi
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Game of Life API", Version = "v1" });
+            });
 
             string mySqlConnectionStr = builder.Configuration.GetConnectionString("DefaultConnection")!;
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -64,7 +68,10 @@ namespace GameOfLifeApi
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Game Of Life API V1");
+                });
             }
 
             app.MapControllers();
