@@ -36,7 +36,7 @@ namespace GameOfLifeApi.Controllers
         [HttpPost("/board")]
         public async Task<ActionResult> Post([FromBody] bool[][] boardState, CancellationToken cancelationToken)
         {
-            var validationResult = ValidateAndLog(boardState,HelperUtil.ValidateJaggedArray,
+            var validationResult = ValidateAndLog(boardState,HelperUtil.ValidateBoard,
                  "Invalid board state received.");
             if (validationResult != null) return validationResult;
 
